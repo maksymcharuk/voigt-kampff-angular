@@ -1,0 +1,18 @@
+<div class="panel result-panel">
+  <div class="kicker">Diagnostic Output</div>
+  <h1>Result Classification</h1>
+
+  @if (result()) {
+    <div class="result-card">
+      <h2>{{ result()?.title }}</h2>
+      <p class="summary">{{ result()?.summary }}</p>
+      <div class="confidence">
+        <span>Confidence</span>
+        <strong>{{ result()?.confidence }}%</strong>
+      </div>
+      <p class="disclaimer">Results valid for 24h. Retesting will overwrite this diagnostic.</p>
+    </div>
+  } @else {
+    <p class="muted">Awaiting diagnostic data…</p>
+  }
+</div>

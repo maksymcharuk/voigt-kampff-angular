@@ -1,0 +1,12 @@
+<div class="panel join-panel">
+  <div class="kicker">Participant</div>
+  <h1>Connecting</h1>
+  @if (status() === 'joining') {
+    <p class="muted">Calibrating your responses…</p>
+  } @else if (status() === 'ready') {
+    <p class="muted">Connection verified. Entering session {{ sessionId() }}.</p>
+  } @else {
+    <p class="muted">Unable to join this session.</p>
+  }
+  <div class="pulse indicator"></div>
+</div>

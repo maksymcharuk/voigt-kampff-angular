@@ -1,1 +1,118 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+	color-scheme: dark;
+	--surface: #0a0c12;
+	--panel: #101420;
+	--panel-strong: #151a2a;
+	--ink: #e9eefc;
+	--muted: #8a96b6;
+	--accent: #8cf0ff;
+	--accent-strong: #4dd0e1;
+	--warning: #ff9f6e;
+	--border: rgba(140, 240, 255, 0.2);
+	--shadow: 0 0 24px rgba(140, 240, 255, 0.15);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Share Tech Mono', monospace;
+	background: var(--surface);
+	color: var(--ink);
+	min-height: 100vh;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	font-family: inherit;
+}
+
+.panel {
+	background: var(--panel);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow);
+	border-radius: 12px;
+	padding: 2rem;
+}
+
+.panel-strong {
+	background: var(--panel-strong);
+}
+
+.kicker {
+	text-transform: uppercase;
+	letter-spacing: 0.3em;
+	color: var(--muted);
+	font-size: 0.7rem;
+}
+
+.primary-button {
+	background: linear-gradient(135deg, rgba(140, 240, 255, 0.2), rgba(140, 240, 255, 0.6));
+	color: var(--ink);
+	border: 1px solid var(--accent);
+	padding: 0.85rem 1.5rem;
+	border-radius: 999px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 0 18px rgba(140, 240, 255, 0.4);
+}
+
+.secondary-button {
+	background: transparent;
+	border: 1px solid var(--border);
+	color: var(--ink);
+	padding: 0.75rem 1.2rem;
+	border-radius: 999px;
+	cursor: pointer;
+}
+
+.scanline {
+	position: relative;
+	overflow: hidden;
+}
+
+.scanline::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(transparent 0%, rgba(140, 240, 255, 0.08) 50%, transparent 100%);
+	opacity: 0.5;
+	animation: scan 6s linear infinite;
+	pointer-events: none;
+}
+
+@keyframes scan {
+	0% {
+		transform: translateY(-100%);
+	}
+	100% {
+		transform: translateY(100%);
+	}
+}
+
+.pulse {
+	animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}

@@ -1,0 +1,17 @@
+.join-panel {
+  width: min(520px, 100%);
+  text-align: center;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.indicator {
+  margin: 1.5rem auto 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 18px rgba(140, 240, 255, 0.6);
+}

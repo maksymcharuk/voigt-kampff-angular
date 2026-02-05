@@ -1,0 +1,34 @@
+<div class="panel play-panel">
+  <div class="kicker">Participant Interface</div>
+  <h1>Respond instinctively</h1>
+
+  @if (status() === 'lobby') {
+    <p class="muted">Waiting for the host to begin the scan.</p>
+  } @else if (status() === 'running' && question()) {
+    <div class="question-block">
+      <div class="question-meta">
+        <span>Question {{ currentIndex() + 1 }} / {{ questions().length }}</span>
+        <span class="timer">{{ timeLeft() }}s</span>
+      </div>
+      <h2>{{ question()?.text }}</h2>
+      <div class="options">
+        @for (option of question()?.options; track option.id) {
+          <button
+            class="option-button"
+            [class.selected]="selectedOption() === option.id"
+            (click)="selectOption(option.id)"
+            [disabled]="selectedOption() !== null"
+          >
+            <span class="tag">{{ option.label }}</span>
+            <span>{{ option.text }}</span>
+          </button>
+        }
+      </div>
+      @if (selectedOption() === 'timeout') {
+        <p class="muted">No response recorded.</p>
+      }
+    </div>
+  } @else {
+    <p class="muted">Awaiting final reveal.</p>
+  }
+</div>

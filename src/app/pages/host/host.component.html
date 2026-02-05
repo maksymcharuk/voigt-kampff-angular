@@ -1,0 +1,99 @@
+<section class="host-grid">
+  <div class="panel host-panel scanline">
+    <div class="kicker">Host Console</div>
+    <h1>Session Control</h1>
+    <p class="muted">Create a session, open the lobby, then run the scan.</p>
+
+    <div class="host-actions">
+      <button class="primary-button" (click)="createSession()" [disabled]="isBusy()">
+        Create Session
+      </button>
+      <button class="secondary-button" (click)="startSession()" [disabled]="!sessionId()">
+        Start Scan
+      </button>
+      <button
+        class="secondary-button"
+        (click)="advanceQuestion()"
+        [disabled]="session()?.status !== 'running'"
+      >
+        Advance Question
+      </button>
+      <button
+        class="secondary-button"
+        (click)="revealResults()"
+        [disabled]="session()?.status !== 'running'"
+      >
+        Reveal Results
+      </button>
+      <button
+        class="secondary-button"
+        (click)="simulateParticipants()"
+        [disabled]="!sessionId() || isBusy()"
+      >
+        Simulate Participants
+      </button>
+    </div>
+
+    @if (error()) {
+      <div class="alert">{{ error() }}</div>
+    }
+
+    @if (session()) {
+      <div class="session-meta">
+        <div>
+          <span class="label">Session</span>
+          <strong>{{ sessionId() }}</strong>
+        </div>
+        <div>
+          <span class="label">Status</span>
+          <strong>{{ session()?.status }}</strong>
+        </div>
+        <div>
+          <span class="label">Question</span>
+          <strong>{{ (session()?.currentQuestionIndex ?? -1) + 1 }}</strong>
+        </div>
+        <div>
+          <span class="label">Participants</span>
+          <strong>{{ participants() }}</strong>
+        </div>
+      </div>
+    }
+
+    @if (session()?.results) {
+      <div class="results-grid">
+        <div>
+          <span class="label">Android Rate</span>
+          <strong>{{ session()?.results?.androidRate }}%</strong>
+        </div>
+        <div>
+          <span class="label">Empathy Avg</span>
+          <strong>{{ session()?.results?.empathyAvg }}</strong>
+        </div>
+        <div>
+          <span class="label">Avg Response</span>
+          <strong>{{ session()?.results?.avgResponseTime }}s</strong>
+        </div>
+        <div>
+          <span class="label">Confidence</span>
+          <strong>{{ session()?.results?.confidence }}%</strong>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="panel host-panel panel-strong">
+    <div class="kicker">Lobby</div>
+    <h2>Join Link</h2>
+    @if (sessionId()) {
+      <p class="muted">Scan to join. Share the code only with participants.</p>
+      <div class="qr-wrap">
+        @if (qrCodeDataUrl()) {
+          <img [src]="qrCodeDataUrl()" alt="Join QR code" />
+        }
+      </div>
+      <div class="join-url">{{ joinUrl() }}</div>
+    } @else {
+      <p class="muted">Create a session to generate a QR code and link.</p>
+    }
+  </div>
+</section>
