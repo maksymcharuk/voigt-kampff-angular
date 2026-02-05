@@ -54,8 +54,10 @@ export class HostComponent implements OnInit, OnDestroy {
         }),
       );
       this.watchSession(id);
-    } catch (error) {
-      this.error.set('Failed to create session.');
+    } catch (error: unknown) {
+      console.error('Create session failed', error);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.error.set(`Failed to create session: ${message}`);
     } finally {
       this.isBusy.set(false);
     }

@@ -1,22 +1,23 @@
-import { Injectable } from '@angular/core';
+import { EnvironmentInjector, Injectable, inject, runInInjectionContext } from '@angular/core';
+import { FirebaseApp } from '@angular/fire/app';
+import { docData } from '@angular/fire/firestore';
 import {
-  Firestore,
   doc,
-  docData,
+  getFirestore,
   getDoc,
   increment,
   serverTimestamp,
   setDoc,
   updateDoc,
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import { map, Observable } from 'rxjs';
 import { ParticipantDoc, ParticipantScores } from '../models/participant';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantService {
   private readonly storageKey = 'vk_participant_id';
-
-  constructor(private firestore: Firestore) {}
+  private readonly firestore = getFirestore(inject(FirebaseApp));
+  private readonly injector = inject(EnvironmentInjector);
 
   getOrCreateParticipantId(): string {
     const existing = localStorage.getItem(this.storageKey);
@@ -107,8 +108,10 @@ export class ParticipantService {
       'participants',
       participantId,
     );
-    return docData(participantRef, { idField: 'id' }).pipe(
-      map((data) => (data as ParticipantDoc) ?? null),
+    return runInInjectionContext(this.injector, () =>
+      docData(participantRef, { idField: 'id' }).pipe(
+        map((data) => (data as ParticipantDoc) ?? null),
+      ),
     );
   }
 }

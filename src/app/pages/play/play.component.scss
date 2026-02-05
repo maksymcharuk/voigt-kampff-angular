@@ -51,6 +51,7 @@
 .option-button.selected {
   border-color: var(--accent);
   box-shadow: 0 0 16px rgba(140, 240, 255, 0.3);
+  background: linear-gradient(135deg, rgba(140, 240, 255, 0.08), rgba(140, 240, 255, 0.2));
 }
 
 .option-button:disabled {

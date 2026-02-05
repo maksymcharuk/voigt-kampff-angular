@@ -10,6 +10,9 @@
         <span>Question {{ currentIndex() + 1 }} / {{ questions().length }}</span>
         <span class="timer">{{ timeLeft() }}s</span>
       </div>
+      @if (error()) {
+        <div class="alert">{{ error() }}</div>
+      }
       <h2>{{ question()?.text }}</h2>
       <div class="options">
         @for (option of question()?.options; track option.id) {
@@ -18,12 +21,16 @@
             [class.selected]="selectedOption() === option.id"
             (click)="selectOption(option.id)"
             [disabled]="selectedOption() !== null"
+            type="button"
           >
             <span class="tag">{{ option.label }}</span>
             <span>{{ option.text }}</span>
           </button>
         }
       </div>
+      @if (selectedOption() && selectedOption() !== 'timeout') {
+        <p class="muted">Answer recorded. Waiting for the next question.</p>
+      }
       @if (selectedOption() === 'timeout') {
         <p class="muted">No response recorded.</p>
       }

@@ -23,6 +23,7 @@ export class PlayComponent implements OnInit, OnDestroy {
   questions = signal<Question[]>([]);
   timeLeft = signal<number>(0);
   selectedOption = signal<string | null>(null);
+  error = signal<string | null>(null);
   scores = signal<ParticipantScores>({
     empathy: 0,
     initiative: 0,
@@ -91,7 +92,14 @@ export class PlayComponent implements OnInit, OnDestroy {
     if (!this.question() || this.selectedOption() || this.status() !== 'running') {
       return;
     }
-    await this.recordAnswer(optionId, this.elapsedSeconds());
+    this.error.set(null);
+    try {
+      await this.recordAnswer(optionId, this.elapsedSeconds());
+    } catch (error: unknown) {
+      console.error('Failed to record answer', error);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.error.set(`Failed to record answer: ${message}`);
+    }
   }
 
   private startQuestionTimer(): void {

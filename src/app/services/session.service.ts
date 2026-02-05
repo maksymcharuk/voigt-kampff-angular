@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
+import { EnvironmentInjector, Injectable, inject, runInInjectionContext } from '@angular/core';
+import { FirebaseApp } from '@angular/fire/app';
+import { collectionData, docData } from '@angular/fire/firestore';
 import {
-  Firestore,
   collection,
-  collectionData,
   doc,
-  docData,
+  getFirestore,
   getDocs,
   increment,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import { map, Observable } from 'rxjs';
 import { SessionDoc, SessionResults, SessionStatus } from '../models/session';
 import { ParticipantDoc } from '../models/participant';
@@ -19,10 +19,9 @@ import { ScoringService } from './scoring.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
-  constructor(
-    private firestore: Firestore,
-    private scoring: ScoringService,
-  ) {}
+  private readonly firestore = getFirestore(inject(FirebaseApp));
+  private readonly scoring = inject(ScoringService);
+  private readonly injector = inject(EnvironmentInjector);
 
   async createSession(questionSetVersion: number): Promise<string> {
     const sessionId = this.generateSessionId();
@@ -42,7 +41,9 @@ export class SessionService {
 
   watchSession(sessionId: string): Observable<SessionDoc | null> {
     const sessionRef = doc(this.firestore, 'sessions', sessionId);
-    return docData(sessionRef, { idField: 'id' }).pipe(map((data) => (data as SessionDoc) ?? null));
+    return runInInjectionContext(this.injector, () =>
+      docData(sessionRef, { idField: 'id' }).pipe(map((data) => (data as SessionDoc) ?? null)),
+    );
   }
 
   updateStatus(sessionId: string, status: SessionStatus): Promise<void> {
@@ -129,7 +130,9 @@ export class SessionService {
 
   watchParticipantsCount(sessionId: string): Observable<number> {
     const participantsRef = collection(this.firestore, 'sessions', sessionId, 'participants');
-    return collectionData(participantsRef).pipe(map((list) => list.length));
+    return runInInjectionContext(this.injector, () =>
+      collectionData(participantsRef).pipe(map((list) => list.length)),
+    );
   }
 
   private generateSessionId(): string {
