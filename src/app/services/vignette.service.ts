@@ -14,28 +14,28 @@ export class VignetteService {
   triggerTimeoutVignette(options: VignetteOptions = {}): void {
     const durationMs = options.durationMs ?? 2400;
     const lingerMs = options.lingerMs ?? 1400;
-    const body = this.document.body;
+    const root = this.document.documentElement;
 
-    if (!body) {
+    if (!root) {
       return;
     }
 
-    body.classList.add('timeout-vignette');
+    root.classList.add('timeout-vignette');
 
     if (this.timeoutId) {
       window.clearTimeout(this.timeoutId);
     }
 
     this.timeoutId = window.setTimeout(() => {
-      body.classList.remove('timeout-vignette');
+      root.classList.remove('timeout-vignette');
       this.timeoutId = undefined;
     }, durationMs + lingerMs);
   }
 
   clear(): void {
-    const body = this.document.body;
-    if (body) {
-      body.classList.remove('timeout-vignette');
+    const root = this.document.documentElement;
+    if (root) {
+      root.classList.remove('timeout-vignette');
     }
     if (this.timeoutId) {
       window.clearTimeout(this.timeoutId);

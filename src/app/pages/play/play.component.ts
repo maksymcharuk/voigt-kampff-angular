@@ -255,8 +255,9 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
 
     const duration = session.countdownSeconds ?? 5;
+    const normalizedStartedAt = Math.min(startedAt, Date.now());
     const updateCountdown = () => {
-      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const elapsedSeconds = Math.max(0, (Date.now() - normalizedStartedAt) / 1000);
       const remaining = Math.max(0, duration - elapsedSeconds);
       this.countdownLeft.set(Math.ceil(remaining));
       if (remaining <= 0) {

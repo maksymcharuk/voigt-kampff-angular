@@ -9,18 +9,25 @@
     <p class="muted">Create a session, open the lobby, then begin the scan.</p>
 
     <div class="host-actions">
-      <button class="primary-button" (click)="createSession()" [disabled]="isBusy()">
-        Create Session
+      <button
+        [class.primary-button]="createSessionPrimary()"
+        [class.secondary-button]="!createSessionPrimary()"
+        (click)="createSession()"
+        [disabled]="isBusy()"
+      >
+        {{ createSessionLabel() }}
       </button>
       <button
-        class="secondary-button"
+        [class.primary-button]="startSessionPrimary()"
+        [class.secondary-button]="!startSessionPrimary()"
         (click)="startSession()"
         [disabled]="!sessionId() || session()?.status !== 'lobby'"
       >
         Start Scan
       </button>
       <button
-        class="secondary-button"
+        [class.primary-button]="revealResultsPrimary()"
+        [class.secondary-button]="!revealResultsPrimary()"
         (click)="revealResults()"
         [disabled]="session()?.status !== 'running' || !allFinished()"
       >
@@ -30,6 +37,10 @@
 
     @if (error()) {
       <div class="alert">{{ error() }}</div>
+    }
+
+    @if (info()) {
+      <div class="alert info" aria-live="polite">{{ info() }}</div>
     }
 
     @if (session()) {

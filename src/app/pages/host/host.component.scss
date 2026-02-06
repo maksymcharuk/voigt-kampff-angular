@@ -79,6 +79,13 @@
   border: 1px solid var(--warning);
   color: var(--warning);
   border-radius: 8px;
+  animation: fadeNotice 3.2s ease-in-out both;
+}
+
+.alert.info {
+  border-color: rgba(140, 240, 255, 0.4);
+  color: var(--accent);
+  background: rgba(140, 240, 255, 0.08);
 }
 
 .scan-block {
@@ -228,5 +235,24 @@
   }
   50% {
     opacity: 0.6;
+  }
+}
+
+@keyframes fadeNotice {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }

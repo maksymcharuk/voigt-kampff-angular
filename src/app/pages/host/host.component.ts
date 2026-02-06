@@ -37,6 +37,7 @@ export class HostComponent implements OnDestroy {
   totalQuestions = signal<number>(this.questionService.getQuestions().length);
   isBusy = signal<boolean>(false);
   error = signal<string | null>(null);
+  info = signal<string | null>(null);
   countdownLeft = signal<number>(0);
 
   participantsCount = computed(() => this.participantsList().length);
@@ -46,6 +47,12 @@ export class HostComponent implements OnDestroy {
     const list = this.participantsList();
     return list.length > 0 && list.every((participant) => participant.finished);
   });
+  createSessionLabel = computed(() => (this.session() ? 'Create New Session' : 'Create Session'));
+  createSessionPrimary = computed(() => !this.session() || this.session()?.status === 'revealed');
+  startSessionPrimary = computed(() => !!this.session() && this.session()?.status === 'lobby');
+  revealResultsPrimary = computed(
+    () => !!this.session() && this.session()?.status === 'running' && this.allFinished(),
+  );
   progressParticipants = computed(() =>
     this.participantsList().map((participant, index) => {
       const answeredCount = participant.answeredCount ?? 0;
@@ -108,11 +115,13 @@ export class HostComponent implements OnDestroy {
   private sessionSub?: Subscription;
   private participantsSub?: Subscription;
   private countdownTimerId?: number;
+  private infoTimerId?: number;
 
   ngOnDestroy(): void {
     this.sessionSub?.unsubscribe();
     this.participantsSub?.unsubscribe();
     this.clearCountdownTimer();
+    this.clearInfoTimer();
   }
 
   async createSession(): Promise<void> {
@@ -145,12 +154,26 @@ export class HostComponent implements OnDestroy {
     if (!id) {
       return;
     }
+    if (this.participantsCount() === 0) {
+      this.showInfo('At least one participant must join before starting the scan.');
+      return;
+    }
+    if (this.session()?.status !== 'lobby') {
+      return;
+    }
     await this.sessionService.startSession(id, 5);
   }
 
   async revealResults(): Promise<void> {
     const id = this.sessionId();
     if (!id) {
+      return;
+    }
+    if (this.session()?.status !== 'running') {
+      return;
+    }
+    if (!this.allFinished()) {
+      this.showInfo('Results can be revealed after all participants finish the scan.');
       return;
     }
     await this.sessionService.updateStatus(id, 'revealed');
@@ -195,8 +218,9 @@ export class HostComponent implements OnDestroy {
     }
 
     const duration = session.countdownSeconds ?? 5;
+    const normalizedStartedAt = Math.min(startedAt, Date.now());
     const updateCountdown = () => {
-      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const elapsedSeconds = Math.max(0, (Date.now() - normalizedStartedAt) / 1000);
       const remaining = Math.max(0, duration - elapsedSeconds);
       this.countdownLeft.set(Math.ceil(remaining));
       if (remaining <= 0) {
@@ -215,6 +239,22 @@ export class HostComponent implements OnDestroy {
     if (this.countdownTimerId) {
       window.clearInterval(this.countdownTimerId);
       this.countdownTimerId = undefined;
+    }
+  }
+
+  private showInfo(message: string): void {
+    this.info.set(message);
+    this.clearInfoTimer();
+    this.infoTimerId = window.setTimeout(() => {
+      this.info.set(null);
+      this.infoTimerId = undefined;
+    }, 3200);
+  }
+
+  private clearInfoTimer(): void {
+    if (this.infoTimerId) {
+      window.clearTimeout(this.infoTimerId);
+      this.infoTimerId = undefined;
     }
   }
 
