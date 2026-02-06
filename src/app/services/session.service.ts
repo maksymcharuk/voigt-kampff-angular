@@ -6,7 +6,6 @@ import {
   doc,
   getFirestore,
   getDocs,
-  increment,
   query,
   serverTimestamp,
   setDoc,
@@ -51,9 +50,14 @@ export class SessionService {
     return updateDoc(sessionRef, { status });
   }
 
-  async advanceQuestion(sessionId: string): Promise<void> {
+  async startSession(sessionId: string, countdownSeconds: number): Promise<void> {
     const sessionRef = doc(this.firestore, 'sessions', sessionId);
-    await updateDoc(sessionRef, { currentQuestionIndex: increment(1) });
+    await updateDoc(sessionRef, {
+      status: 'running',
+      currentQuestionIndex: 0,
+      countdownStartedAt: serverTimestamp(),
+      countdownSeconds,
+    });
   }
 
   async resetQuestions(sessionId: string): Promise<void> {
@@ -103,35 +107,12 @@ export class SessionService {
     return results;
   }
 
-  async simulateParticipants(sessionId: string, count: number): Promise<void> {
-    const participantsRef = collection(this.firestore, 'sessions', sessionId, 'participants');
-
-    const writes: Promise<void>[] = [];
-    for (let i = 0; i < count; i += 1) {
-      const participantId = `sim-${Math.random().toString(36).slice(2, 8)}`;
-      const participant: ParticipantDoc = {
-        finished: true,
-        avgResponseTime: Number((Math.random() * 2 + 1.2).toFixed(2)),
-        timeouts: Math.floor(Math.random() * 2),
-        scores: {
-          empathy: Math.floor(Math.random() * 6),
-          initiative: Math.floor(Math.random() * 5),
-          ambiguity: Math.floor(Math.random() * 4),
-          efficiency: Math.floor(Math.random() * 6),
-        },
-      };
-      writes.push(setDoc(doc(participantsRef, participantId), participant));
-    }
-
-    await Promise.all(writes);
-    const sessionRef = doc(this.firestore, 'sessions', sessionId);
-    await updateDoc(sessionRef, { totalParticipants: increment(count) });
-  }
-
-  watchParticipantsCount(sessionId: string): Observable<number> {
+  watchParticipants(sessionId: string): Observable<ParticipantDoc[]> {
     const participantsRef = collection(this.firestore, 'sessions', sessionId, 'participants');
     return runInInjectionContext(this.injector, () =>
-      collectionData(participantsRef).pipe(map((list) => list.length)),
+      collectionData(participantsRef, { idField: 'id' }).pipe(
+        map((list) => list.map((participant) => participant as ParticipantDoc)),
+      ),
     );
   }
 

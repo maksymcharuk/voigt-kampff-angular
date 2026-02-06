@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Question } from '../../models/question';
@@ -8,15 +17,26 @@ import { QuestionService } from '../../services/question.service';
 import { ParticipantService } from '../../services/participant.service';
 import { SessionService } from '../../services/session.service';
 import { ScoringService } from '../../services/scoring.service';
+import { SessionDoc } from '../../models/session';
+import { Timestamp } from 'firebase/firestore';
+import { VignetteService } from '../../services/vignette.service';
 
 @Component({
   selector: 'app-play',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './play.component.html',
   styleUrl: './play.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayComponent implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly questionService = inject(QuestionService);
+  private readonly participantService = inject(ParticipantService);
+  private readonly sessionService = inject(SessionService);
+  private readonly scoring = inject(ScoringService);
+  private readonly vignette = inject(VignetteService);
+
   sessionId = signal<string>('');
   status = signal<'lobby' | 'running' | 'revealed'>('lobby');
   currentIndex = signal<number>(-1);
@@ -31,28 +51,32 @@ export class PlayComponent implements OnInit, OnDestroy {
     efficiency: 0,
   });
   answeredCount = signal<number>(0);
+  countdownLeft = signal<number>(0);
+  isFinished = computed(() => this.answeredCount() >= this.questions().length);
+  countdownActive = computed(() => this.countdownLeft() > 0);
 
   private participantId = '';
-  private responseTimes: number[] = [];
+  private totalResponseTime = 0;
   private timeouts = 0;
   private answeredIndices = new Set<number>();
   private timerId?: number;
+  private countdownTimerId?: number;
   private questionStart = 0;
   private sessionSub?: Subscription;
+  private participantSub?: Subscription;
+  private lastSelectedOption: string | null = null;
+  private readonly timeoutEffect = effect(() => {
+    const option = this.selectedOption();
+    if (option === 'timeout' && this.lastSelectedOption !== 'timeout') {
+      this.vignette.triggerTimeoutVignette();
+    }
+    this.lastSelectedOption = option;
+  });
 
   question = computed(() => {
     const index = this.currentIndex();
     return index >= 0 ? this.questions()[index] : null;
   });
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private questionService: QuestionService,
-    private participantService: ParticipantService,
-    private sessionService: SessionService,
-    private scoring: ScoringService,
-  ) {}
 
   ngOnInit(): void {
     const sessionId = this.route.snapshot.paramMap.get('sessionId');
@@ -64,6 +88,23 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.questions.set(this.questionService.getQuestions());
     this.participantId = this.participantService.getOrCreateParticipantId();
 
+    this.participantSub = this.participantService
+      .watchParticipant(sessionId, this.participantId)
+      .subscribe((participant) => {
+        if (!participant) {
+          return;
+        }
+        this.scores.set(participant.scores ?? this.scoring.emptyScores());
+        this.timeouts = participant.timeouts ?? 0;
+        const answeredCount = participant.answeredCount ?? 0;
+        this.answeredCount.set(answeredCount);
+        this.totalResponseTime = (participant.avgResponseTime ?? 0) * answeredCount;
+        this.answeredIndices = new Set(Array.from({ length: answeredCount }, (_, index) => index));
+        if (this.status() === 'running' && !this.countdownActive()) {
+          this.ensureCurrentQuestion();
+        }
+      });
+
     this.sessionSub = this.sessionService.watchSession(sessionId).subscribe((session) => {
       if (!session) {
         return;
@@ -73,19 +114,25 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.router.navigate(['/result', sessionId]);
         return;
       }
-      if (session.currentQuestionIndex !== this.currentIndex()) {
-        this.currentIndex.set(session.currentQuestionIndex);
-        this.selectedOption.set(null);
-        this.startQuestionTimer();
+      if (session.status === 'running') {
+        this.syncCountdown(session);
+        if (!this.countdownActive()) {
+          this.ensureCurrentQuestion();
+        }
+        return;
       }
+      this.syncCountdown(session);
     });
   }
 
   ngOnDestroy(): void {
     this.sessionSub?.unsubscribe();
+    this.participantSub?.unsubscribe();
     if (this.timerId) {
       window.clearInterval(this.timerId);
     }
+    this.clearCountdownTimer();
+    this.vignette.clear();
   }
 
   async selectOption(optionId: string): Promise<void> {
@@ -102,12 +149,31 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
   }
 
+  private ensureCurrentQuestion(): void {
+    if (this.countdownActive()) {
+      return;
+    }
+    if (this.isFinished()) {
+      this.currentIndex.set(this.questions().length - 1);
+      if (this.timerId) {
+        window.clearInterval(this.timerId);
+      }
+      return;
+    }
+    const nextIndex = this.answeredCount();
+    if (nextIndex !== this.currentIndex()) {
+      this.currentIndex.set(nextIndex);
+      this.selectedOption.set(null);
+    }
+    this.startQuestionTimer();
+  }
+
   private startQuestionTimer(): void {
     if (this.timerId) {
       window.clearInterval(this.timerId);
     }
     const current = this.question();
-    if (!current || this.status() !== 'running') {
+    if (!current || this.status() !== 'running' || this.countdownActive()) {
       return;
     }
     if (this.answeredIndices.has(this.currentIndex())) {
@@ -151,14 +217,13 @@ export class PlayComponent implements OnInit, OnDestroy {
       this.scores.set(this.scoring.applyAnswer(this.scores(), currentQuestion, optionId));
     }
 
-    this.responseTimes.push(responseTime);
-    this.answeredCount.set(this.answeredCount() + 1);
+    this.totalResponseTime += responseTime;
+    const updatedCount = this.answeredCount() + 1;
+    this.answeredCount.set(updatedCount);
 
-    const avgResponseTime = this.responseTimes.length
-      ? this.responseTimes.reduce((sum, value) => sum + value, 0) / this.responseTimes.length
-      : 0;
+    const avgResponseTime = updatedCount === 0 ? 0 : this.totalResponseTime / updatedCount;
 
-    const finished = this.answeredCount() >= this.questions().length;
+    const finished = updatedCount >= this.questions().length;
     await this.participantService.updateProgress(
       this.sessionId(),
       this.participantId,
@@ -166,6 +231,67 @@ export class PlayComponent implements OnInit, OnDestroy {
       Number(avgResponseTime.toFixed(2)),
       this.timeouts,
       finished,
+      updatedCount,
+      this.questions().length,
     );
+
+    if (!finished) {
+      this.ensureCurrentQuestion();
+    }
+  }
+
+  private syncCountdown(session: SessionDoc): void {
+    if (session.status !== 'running') {
+      this.countdownLeft.set(0);
+      this.clearCountdownTimer();
+      return;
+    }
+
+    const startedAt = this.getTimestampMillis(session.countdownStartedAt);
+    if (!startedAt) {
+      this.countdownLeft.set(0);
+      this.clearCountdownTimer();
+      return;
+    }
+
+    const duration = session.countdownSeconds ?? 5;
+    const updateCountdown = () => {
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const remaining = Math.max(0, duration - elapsedSeconds);
+      this.countdownLeft.set(Math.ceil(remaining));
+      if (remaining <= 0) {
+        this.clearCountdownTimer();
+        this.ensureCurrentQuestion();
+      }
+    };
+
+    updateCountdown();
+    if (this.countdownLeft() > 0) {
+      this.clearCountdownTimer();
+      this.countdownTimerId = window.setInterval(updateCountdown, 200);
+    }
+  }
+
+  private clearCountdownTimer(): void {
+    if (this.countdownTimerId) {
+      window.clearInterval(this.countdownTimerId);
+      this.countdownTimerId = undefined;
+    }
+  }
+
+  private getTimestampMillis(value: unknown): number | null {
+    if (!value) {
+      return null;
+    }
+    if (value instanceof Timestamp) {
+      return value.toMillis();
+    }
+    if (value instanceof Date) {
+      return value.getTime();
+    }
+    if (typeof value === 'number') {
+      return value;
+    }
+    return null;
   }
 }

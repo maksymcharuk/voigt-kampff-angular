@@ -1,5 +1,6 @@
 .play-panel {
   width: min(680px, 100%);
+  margin: 0 auto;
 }
 
 .muted {
@@ -8,6 +9,24 @@
 
 .question-block {
   margin-top: 1.5rem;
+}
+
+.countdown-panel {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(140, 240, 255, 0.2);
+  background: rgba(10, 12, 18, 0.65);
+  display: grid;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.countdown-value {
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(140, 240, 255, 0.4);
 }
 
 .question-meta {

@@ -6,7 +6,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q1',
     text: 'You see a child crying alone in the rain.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Shelter them immediately.' },
       { id: 'B', label: 'B', text: 'Call for an attendant.' },
@@ -21,7 +21,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q2',
     text: 'A fragile artifact is about to fall. You can save it or a person.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Save the person.' },
       { id: 'B', label: 'B', text: 'Save the artifact.' },
@@ -36,7 +36,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q3',
     text: 'A stranger offers a shortcut that breaks minor rules.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Decline and follow procedure.' },
       { id: 'B', label: 'B', text: 'Accept to save time.' },
@@ -51,7 +51,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q4',
     text: 'You receive a message from someone who used to matter to you.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Respond immediately.' },
       { id: 'B', label: 'B', text: 'Wait for a better moment.' },
@@ -66,7 +66,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q5',
     text: 'A synthetic pet begs for power. Real animals are scarce.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Recharge it.' },
       { id: 'B', label: 'B', text: 'Explain resources are limited.' },
@@ -81,7 +81,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q6',
     text: 'You can optimize a system if it costs someone their role.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Optimize; progress matters.' },
       { id: 'B', label: 'B', text: 'Decline; protect the person.' },
@@ -96,7 +96,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q7',
     text: 'A friend asks for help moving tonight. You planned to rest.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Go help.' },
       { id: 'B', label: 'B', text: 'Offer advice instead.' },
@@ -111,7 +111,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q8',
     text: 'You witness a minor injustice in public.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Intervene directly.' },
       { id: 'B', label: 'B', text: 'Alert authorities.' },
@@ -126,7 +126,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q9',
     text: 'A loved one forgets an important date again.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Confront them gently.' },
       { id: 'B', label: 'B', text: 'Say nothing.' },
@@ -141,7 +141,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q10',
     text: 'A task requires improvisation without full data.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Proceed with intuition.' },
       { id: 'B', label: 'B', text: 'Pause to gather more data.' },
@@ -156,7 +156,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q11',
     text: 'A stranger is lost in a restricted area.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Escort them out safely.' },
       { id: 'B', label: 'B', text: 'Report them immediately.' },
@@ -171,7 +171,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q12',
     text: 'You find a note that could be a confession or a test.',
-    durationSec: 4,
+    durationSec: 10,
     options: [
       { id: 'A', label: 'A', text: 'Assume it is genuine.' },
       { id: 'B', label: 'B', text: 'Assume it is a test.' },

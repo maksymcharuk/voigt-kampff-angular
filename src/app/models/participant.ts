@@ -12,4 +12,6 @@ export interface ParticipantDoc {
   avgResponseTime: number;
   scores: ParticipantScores;
   timeouts: number;
+  answeredCount?: number;
+  totalQuestions?: number;
 }

@@ -44,6 +44,8 @@ export class ParticipantService {
         finished: false,
         avgResponseTime: 0,
         timeouts: 0,
+        answeredCount: 0,
+        totalQuestions: 0,
         scores: {
           empathy: 0,
           initiative: 0,
@@ -84,6 +86,8 @@ export class ParticipantService {
     avgResponseTime: number,
     timeouts: number,
     finished: boolean,
+    answeredCount: number,
+    totalQuestions: number,
   ): Promise<void> {
     const participantRef = doc(
       this.firestore,
@@ -97,6 +101,8 @@ export class ParticipantService {
       avgResponseTime,
       timeouts,
       finished,
+      answeredCount,
+      totalQuestions,
     });
   }
 

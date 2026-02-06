@@ -14,5 +14,7 @@ export interface SessionDoc {
   currentQuestionIndex: number;
   questionSetVersion: number;
   totalParticipants: number;
+  countdownStartedAt?: unknown;
+  countdownSeconds?: number;
   results?: SessionResults;
 }
