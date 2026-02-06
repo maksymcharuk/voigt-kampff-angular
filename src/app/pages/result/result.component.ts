@@ -39,6 +39,7 @@ export class ResultComponent implements OnInit {
       this.participant.set(participant);
       const classification = this.scoring.classify(
         participant.scores ?? this.scoring.emptyScores(),
+        participant.responses ?? [],
         participant.avgResponseTime ?? 0,
         participant.timeouts ?? 0,
       );

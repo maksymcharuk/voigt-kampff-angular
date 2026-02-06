@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Question } from '../../models/question';
-import { ParticipantScores } from '../../models/participant';
+import { ParticipantScores, QuestionResponseSummary } from '../../models/participant';
 import { QuestionService } from '../../services/question.service';
 import { ParticipantService } from '../../services/participant.service';
 import { SessionService } from '../../services/session.service';
@@ -58,6 +58,7 @@ export class PlayComponent implements OnInit, OnDestroy {
   private participantId = '';
   private totalResponseTime = 0;
   private timeouts = 0;
+  private responses: QuestionResponseSummary[] = [];
   private answeredIndices = new Set<number>();
   private timerId?: number;
   private countdownTimerId?: number;
@@ -98,7 +99,10 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.timeouts = participant.timeouts ?? 0;
         const answeredCount = participant.answeredCount ?? 0;
         this.answeredCount.set(answeredCount);
-        this.totalResponseTime = (participant.avgResponseTime ?? 0) * answeredCount;
+        this.responses = participant.responses ?? [];
+        this.totalResponseTime = this.responses.length
+          ? this.responses.reduce((sum, response) => sum + response.responseTime, 0)
+          : (participant.avgResponseTime ?? 0) * answeredCount;
         this.answeredIndices = new Set(Array.from({ length: answeredCount }, (_, index) => index));
         if (this.status() === 'running' && !this.countdownActive()) {
           this.ensureCurrentQuestion();
@@ -211,6 +215,17 @@ export class PlayComponent implements OnInit, OnDestroy {
       Number(responseTime.toFixed(2)),
     );
 
+    const axisTotals = this.scoring.getAxisTotals(currentQuestion, optionId);
+    this.responses = [
+      ...this.responses,
+      {
+        questionId: currentQuestion.id,
+        optionId,
+        responseTime: Number(responseTime.toFixed(2)),
+        axisTotals,
+      },
+    ];
+
     if (optionId === 'timeout') {
       this.timeouts += 1;
     } else {
@@ -233,6 +248,7 @@ export class PlayComponent implements OnInit, OnDestroy {
       finished,
       updatedCount,
       this.questions().length,
+      this.responses,
     );
 
     if (!finished) {

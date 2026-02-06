@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { map, Observable } from 'rxjs';
-import { ParticipantDoc, ParticipantScores } from '../models/participant';
+import { ParticipantDoc, ParticipantScores, QuestionResponseSummary } from '../models/participant';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantService {
@@ -46,6 +46,7 @@ export class ParticipantService {
         timeouts: 0,
         answeredCount: 0,
         totalQuestions: 0,
+        responses: [],
         scores: {
           empathy: 0,
           initiative: 0,
@@ -88,6 +89,7 @@ export class ParticipantService {
     finished: boolean,
     answeredCount: number,
     totalQuestions: number,
+    responses: QuestionResponseSummary[],
   ): Promise<void> {
     const participantRef = doc(
       this.firestore,
@@ -103,6 +105,7 @@ export class ParticipantService {
       finished,
       answeredCount,
       totalQuestions,
+      responses,
     });
   }
 

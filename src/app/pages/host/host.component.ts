@@ -61,6 +61,7 @@ export class HostComponent implements OnDestroy {
       const classification = participant.finished
         ? this.scoring.classify(
             participant.scores ?? this.scoring.emptyScores(),
+            participant.responses ?? [],
             participant.avgResponseTime ?? 0,
             participant.timeouts ?? 0,
           )
@@ -94,10 +95,11 @@ export class HostComponent implements OnDestroy {
       avgResponseSum += participant.avgResponseTime ?? 0;
       const classification = this.scoring.classify(
         participant.scores ?? this.scoring.emptyScores(),
+        participant.responses ?? [],
         participant.avgResponseTime ?? 0,
         participant.timeouts ?? 0,
       );
-      if (classification.archetype === 'High-Functioning Android') {
+      if (classification.archetype === 'Android — High-Functioning Optimization') {
         androidCount += 1;
       }
       confidenceSum += classification.confidence;
