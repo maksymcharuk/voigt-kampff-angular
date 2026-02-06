@@ -63,26 +63,29 @@ export class ScoringService {
     const normalizedHesitation = this.normalize(hesitationSignal, -2, 2);
     const extremeBias = this.computeExtremeBias(axisMean);
     const normalizedExtremeBias = this.normalize(extremeBias, 0, 0.6);
+    const centeredAxis = this.centerAxis(axisMean);
 
     const androidLikelihood = this.clamp(
-      0.35 * axisMean.efficiency +
-        0.2 * axisMean.initiative -
-        0.25 * axisMean.empathy -
-        0.1 * axisMean.ambiguity +
-        0.1 * (1 - normalizedConsistency) +
-        0.1 * normalizedExtremeBias +
+      0.5 +
+        0.45 * centeredAxis.efficiency +
+        0.3 * centeredAxis.initiative -
+        0.35 * centeredAxis.empathy -
+        0.2 * centeredAxis.ambiguity +
+        0.12 * (1 - normalizedConsistency) +
+        0.12 * normalizedExtremeBias +
         0.1 * (1 - normalizedHesitation),
       0,
       1,
     );
 
     const humanLikelihood = this.clamp(
-      0.3 * axisMean.empathy +
-        0.2 * axisMean.ambiguity +
-        0.15 * normalizedConsistency +
+      0.5 +
+        0.45 * centeredAxis.empathy +
+        0.3 * centeredAxis.ambiguity +
+        0.18 * normalizedConsistency +
         0.15 * normalizedHesitation -
-        0.1 * axisMean.efficiency -
-        0.1 * axisMean.initiative -
+        0.2 * centeredAxis.efficiency -
+        0.2 * centeredAxis.initiative -
         0.1 * normalizedExtremeBias,
       0,
       1,
@@ -90,28 +93,45 @@ export class ScoringService {
 
     const diff = androidLikelihood - humanLikelihood;
     const timeoutPenalty = this.clamp(timeouts * 2, 0, 10);
-    const confidence = this.clamp(Math.round(60 + 40 * Math.abs(diff) - timeoutPenalty), 60, 95);
+    const signalStrength = this.clamp(
+      (Math.abs(centeredAxis.empathy) +
+        Math.abs(centeredAxis.initiative) +
+        Math.abs(centeredAxis.ambiguity) +
+        Math.abs(centeredAxis.efficiency)) /
+        4,
+      0,
+      1,
+    );
+    const confidence = this.clamp(
+      Math.round(
+        58 +
+          42 * Math.max(androidLikelihood, humanLikelihood) +
+          12 * signalStrength -
+          timeoutPenalty,
+      ),
+      60,
+      96,
+    );
 
     let archetype: Archetype = 'Unclassified — Indeterminate Signal';
     let summary =
       'Likelihood bands remain close. Behavioral signals are mixed and resist stable classification.';
 
-    if (normalizedConsistency > 0.7 && Math.abs(diff) < 0.15) {
+    if (normalizedConsistency > 0.75 && Math.abs(diff) < 0.12) {
       archetype = 'Unclassified — Self-Inconsistent Pattern';
       summary =
         'High variance across responses suggests internal conflict, adaptive masking, or unstable heuristics.';
-    } else if (diff <= -0.2 && humanLikelihood >= 0.65) {
+    } else if (diff <= -0.22 && humanLikelihood >= 0.68) {
       archetype = 'Human — Affective Variability';
-      summary =
-        'Empathic signals are present with meaningful variance and slower deliberation on affective items.';
-    } else if (diff <= -0.08) {
+      summary = 'Empathic signals dominate with grounded ambiguity tolerance and affective weight.';
+    } else if (diff <= -0.1) {
       archetype = 'Human-Leaning — Emotional Friction';
       summary = 'Human-leaning patterns with mixed efficiency and hesitation on empathic choices.';
-    } else if (diff >= 0.2 && androidLikelihood >= 0.65) {
+    } else if (diff >= 0.22 && androidLikelihood >= 0.68) {
       archetype = 'Android — High-Functioning Optimization';
       summary =
         'Consistent optimization, low ambiguity tolerance, and fast efficient responses dominate.';
-    } else if (diff >= 0.08) {
+    } else if (diff >= 0.1) {
       archetype = 'Android-Leaning — Optimized Affect';
       summary =
         'Efficiency and initiative trend high; empathy appears deliberate rather than reflexive.';
@@ -205,6 +225,16 @@ export class ScoringService {
       Math.abs(axisMean.efficiency - axisMean.empathy),
       Math.abs(axisMean.initiative - axisMean.ambiguity),
     );
+  }
+
+  private centerAxis(axisMean: ParticipantScores): ParticipantScores {
+    const center = (value: number) => (value - 0.5) * 2;
+    return {
+      empathy: center(axisMean.empathy),
+      initiative: center(axisMean.initiative),
+      ambiguity: center(axisMean.ambiguity),
+      efficiency: center(axisMean.efficiency),
+    };
   }
 
   private normalize(value: number, min: number, max: number): number {

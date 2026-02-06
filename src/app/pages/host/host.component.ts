@@ -34,7 +34,7 @@ export class HostComponent implements OnDestroy {
   joinUrl = signal<string>('');
   qrCodeDataUrl = signal<string>('');
   participantsList = signal<ParticipantDoc[]>([]);
-  totalQuestions = signal<number>(this.questionService.getQuestions().length);
+  totalQuestions = signal<number>(this.questionService.getPerSessionCount());
   isBusy = signal<boolean>(false);
   error = signal<string | null>(null);
   info = signal<string | null>(null);

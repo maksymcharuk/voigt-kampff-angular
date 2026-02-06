@@ -1,6 +1,6 @@
 import { Question } from '../models/question';
 
-export const QUESTION_SET_VERSION = 2;
+export const QUESTION_SET_VERSION = 3;
 
 export const QUESTIONS: Question[] = [
   {
@@ -181,6 +181,156 @@ export const QUESTIONS: Question[] = [
       A: { empathy: 2, ambiguity: 1 },
       B: { efficiency: 1, ambiguity: 1 },
       C: { initiative: 1, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q13',
+    text: 'A memory feels borrowed. It comforts you anyway.',
+    durationSec: 12,
+    options: [
+      { id: 'A', label: 'A', text: 'Hold onto it; comfort matters.' },
+      { id: 'B', label: 'B', text: 'Discard it; accuracy matters.' },
+      { id: 'C', label: 'C', text: 'Test it against evidence.' },
+    ],
+    scoring: {
+      A: { empathy: 2, ambiguity: 1 },
+      B: { efficiency: 2, empathy: -1 },
+      C: { initiative: 1, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q14',
+    text: 'You are asked to evaluate a being who sounds convincingly human.',
+    durationSec: 13,
+    options: [
+      { id: 'A', label: 'A', text: 'Focus on emotional inconsistency.' },
+      { id: 'B', label: 'B', text: 'Focus on factual precision.' },
+      { id: 'C', label: 'C', text: 'Let them tell a story.' },
+    ],
+    scoring: {
+      A: { empathy: 1, ambiguity: 1, initiative: 1 },
+      B: { efficiency: 2, ambiguity: -1 },
+      C: { empathy: 2, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q15',
+    text: 'A hidden test measures how you react to animal suffering.',
+    durationSec: 12,
+    options: [
+      { id: 'A', label: 'A', text: 'Intervene immediately.' },
+      { id: 'B', label: 'B', text: 'Assess risk before acting.' },
+      { id: 'C', label: 'C', text: 'Document and report.' },
+    ],
+    scoring: {
+      A: { empathy: 2, initiative: 1, efficiency: -1 },
+      B: { ambiguity: 1, efficiency: 1 },
+      C: { efficiency: 2, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q16',
+    text: 'You realize someone has been imitating your mannerisms for weeks.',
+    durationSec: 13,
+    options: [
+      { id: 'A', label: 'A', text: 'Ask them why; stay curious.' },
+      { id: 'B', label: 'B', text: 'Confront them sharply.' },
+      { id: 'C', label: 'C', text: 'Ignore it and protect your distance.' },
+    ],
+    scoring: {
+      A: { empathy: 1, ambiguity: 1, initiative: 1 },
+      B: { initiative: 2, empathy: -1 },
+      C: { efficiency: 1, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q17',
+    text: 'A partner asks if you would trade a memory to solve a crisis faster.',
+    durationSec: 14,
+    options: [
+      { id: 'A', label: 'A', text: 'Yes, if it saves lives.' },
+      { id: 'B', label: 'B', text: 'No, identity is not negotiable.' },
+      { id: 'C', label: 'C', text: 'Ask what the memory is worth.' },
+    ],
+    scoring: {
+      A: { efficiency: 2, empathy: 1 },
+      B: { empathy: 2, initiative: 1 },
+      C: { ambiguity: 2, initiative: 1 },
+    },
+  },
+  {
+    id: 'q18',
+    text: 'You overhear someone calling you “manufactured.”',
+    durationSec: 12,
+    options: [
+      { id: 'A', label: 'A', text: 'Correct them calmly.' },
+      { id: 'B', label: 'B', text: 'Ignore them; focus on task.' },
+      { id: 'C', label: 'C', text: 'Challenge them publicly.' },
+    ],
+    scoring: {
+      A: { ambiguity: 1, initiative: 1 },
+      B: { efficiency: 2, empathy: -1 },
+      C: { initiative: 2, empathy: 1 },
+    },
+  },
+  {
+    id: 'q19',
+    text: 'A perfect solution would expose a painful truth for everyone involved.',
+    durationSec: 13,
+    options: [
+      { id: 'A', label: 'A', text: 'Choose truth, even if it hurts.' },
+      { id: 'B', label: 'B', text: 'Choose a softer, slower path.' },
+      { id: 'C', label: 'C', text: 'Delay until you can soften it.' },
+    ],
+    scoring: {
+      A: { efficiency: 2, initiative: 1 },
+      B: { empathy: 2, ambiguity: 1 },
+      C: { ambiguity: 2, empathy: 1 },
+    },
+  },
+  {
+    id: 'q20',
+    text: 'A stranger offers a test to prove your “authenticity.”',
+    durationSec: 12,
+    options: [
+      { id: 'A', label: 'A', text: 'Refuse; authenticity isn’t performative.' },
+      { id: 'B', label: 'B', text: 'Accept and control the terms.' },
+      { id: 'C', label: 'C', text: 'Agree only if it helps them.' },
+    ],
+    scoring: {
+      A: { initiative: 1, ambiguity: 1 },
+      B: { efficiency: 1, initiative: 1 },
+      C: { empathy: 2, ambiguity: 1 },
+    },
+  },
+  {
+    id: 'q21',
+    text: 'You are asked to retire a being who claims to feel fear.',
+    durationSec: 14,
+    options: [
+      { id: 'A', label: 'A', text: 'Verify the claim before acting.' },
+      { id: 'B', label: 'B', text: 'Decline; fear deserves mercy.' },
+      { id: 'C', label: 'C', text: 'Proceed; duty outweighs claims.' },
+    ],
+    scoring: {
+      A: { ambiguity: 2, initiative: 1 },
+      B: { empathy: 2, efficiency: -1 },
+      C: { efficiency: 2, empathy: -1 },
+    },
+  },
+  {
+    id: 'q22',
+    text: 'A child asks if your feelings are real.',
+    durationSec: 12,
+    options: [
+      { id: 'A', label: 'A', text: 'Answer gently and honestly.' },
+      { id: 'B', label: 'B', text: 'Deflect to avoid confusion.' },
+      { id: 'C', label: 'C', text: 'Explain the mechanics of emotion.' },
+    ],
+    scoring: {
+      A: { empathy: 2, ambiguity: 1 },
+      B: { efficiency: 1, ambiguity: 1 },
+      C: { efficiency: 1, initiative: 1 },
     },
   },
 ];

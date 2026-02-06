@@ -86,7 +86,7 @@ export class PlayComponent implements OnInit, OnDestroy {
       return;
     }
     this.sessionId.set(sessionId);
-    this.questions.set(this.questionService.getQuestions());
+    this.questions.set(this.questionService.getQuestions(sessionId));
     this.participantId = this.participantService.getOrCreateParticipantId();
 
     this.participantSub = this.participantService
