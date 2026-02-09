@@ -29,7 +29,7 @@ export class ParticipantService {
     return id;
   }
 
-  async joinSession(sessionId: string, participantId: string): Promise<void> {
+  async joinSession(sessionId: string, participantId: string, name: string): Promise<void> {
     const participantRef = doc(
       this.firestore,
       'sessions',
@@ -40,6 +40,7 @@ export class ParticipantService {
     const snapshot = await getDoc(participantRef);
     if (!snapshot.exists()) {
       const participant: ParticipantDoc = {
+        name,
         joinedAt: serverTimestamp(),
         finished: false,
         avgResponseTime: 0,
@@ -58,6 +59,8 @@ export class ParticipantService {
       await updateDoc(doc(this.firestore, 'sessions', sessionId), {
         totalParticipants: increment(1),
       });
+    } else {
+      await updateDoc(participantRef, { name });
     }
   }
 

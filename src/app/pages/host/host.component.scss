@@ -27,6 +27,14 @@
   margin: 0.6rem 0 1rem;
 }
 
+.host-panel.compact {
+  padding: 1rem 1.25rem;
+}
+
+.host-panel.compact .host-actions {
+  margin-top: 0.5rem;
+}
+
 .muted {
   color: var(--muted);
 }
@@ -194,6 +202,7 @@
 
 .analytics {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
   font-size: 0.8rem;
 }

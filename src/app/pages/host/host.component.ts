@@ -58,6 +58,7 @@ export class HostComponent implements OnDestroy {
       const answeredCount = participant.answeredCount ?? 0;
       const total = this.totalQuestions();
       const progress = total === 0 ? 0 : Math.min(100, Math.round((answeredCount / total) * 100));
+      const name = participant.name?.trim();
       const classification = participant.finished
         ? this.scoring.classify(
             participant.scores ?? this.scoring.emptyScores(),
@@ -69,6 +70,7 @@ export class HostComponent implements OnDestroy {
       return {
         id: participant.id ?? `P${index + 1}`,
         label: index + 1,
+        displayName: name ? name : `Participant ${index + 1}`,
         answeredCount,
         total,
         progress,

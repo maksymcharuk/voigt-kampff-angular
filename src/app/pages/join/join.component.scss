@@ -3,6 +3,43 @@
   text-align: center;
 }
 
+.join-form {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  text-align: left;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.field input {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 18px rgba(140, 240, 255, 0.25);
+}
+
+.field input.invalid {
+  border-color: var(--warning);
+  box-shadow: 0 0 18px rgba(255, 159, 110, 0.35);
+}
+
 .muted {
   color: var(--muted);
 }

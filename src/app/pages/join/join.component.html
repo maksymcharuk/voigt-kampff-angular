@@ -1,7 +1,27 @@
 <div class="panel join-panel">
   <div class="kicker">Participant</div>
-  <h1>Connecting</h1>
-  @if (status() === 'joining') {
+  <h1>Connect</h1>
+
+  @if (status() === 'idle') {
+    <p class="muted">Enter your name to join session {{ sessionId() }}.</p>
+    <form class="join-form" (submit)="join()">
+      <label class="field">
+        <span>Name</span>
+        <input
+          type="text"
+          [formControl]="nameControl"
+          placeholder="Your name"
+          maxlength="28"
+          autocomplete="name"
+          [class.invalid]="nameControl.invalid && nameControl.touched"
+        />
+      </label>
+      <button class="primary-button" type="submit" [disabled]="isBusy()">Join Scan</button>
+    </form>
+    @if (nameControl.invalid && nameControl.touched) {
+      <p class="muted">Please enter a name to continue.</p>
+    }
+  } @else if (status() === 'joining') {
     <p class="muted">Calibrating your responses…</p>
   } @else if (status() === 'ready') {
     <p class="muted">Connection verified. Entering session {{ sessionId() }}.</p>

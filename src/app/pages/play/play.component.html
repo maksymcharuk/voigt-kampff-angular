@@ -1,6 +1,8 @@
 <div class="panel play-panel">
-  <div class="kicker">Participant Interface</div>
-  <h1>Respond instinctively</h1>
+  @if (status() === 'lobby') {
+    <div class="kicker">Participant Interface</div>
+    <h1>Respond instinctively</h1>
+  }
 
   @if (status() === 'lobby') {
     <p class="muted">Waiting for the host to begin the scan.</p>

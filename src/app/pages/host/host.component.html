@@ -3,10 +3,17 @@
   [class.lobby]="!session() || session()?.status === 'lobby'"
   [class.live]="session() && session()?.status !== 'lobby'"
 >
-  <div class="panel host-panel scanline" [class.scan-active]="scanActive()">
+  <div
+    class="panel host-panel scanline"
+    [class.scan-active]="scanActive()"
+    [class.compact]="session()?.status === 'revealed'"
+  >
     <div class="kicker">Host Console</div>
-    <h1>Session Control</h1>
-    <p class="muted">Create a session, open the lobby, then begin the scan.</p>
+
+    @if (session()?.status !== 'revealed') {
+      <h1>Session Control</h1>
+      <p class="muted">Create a session, open the lobby, then begin the scan.</p>
+    }
 
     <div class="host-actions">
       <button
@@ -43,7 +50,7 @@
       <div class="alert info" aria-live="polite">{{ info() }}</div>
     }
 
-    @if (session()) {
+    @if (session() && session()?.status !== 'revealed') {
       <div class="session-meta">
         <div>
           <span class="label">Session</span>
@@ -97,13 +104,13 @@
             @for (participant of progressParticipants(); track participant.id) {
               <article class="progress-card">
                 <div class="progress-header">
-                  <span>Participant {{ participant.label }}</span>
+                  <span>{{ participant.displayName }}</span>
                   <span class="progress-value">{{ participant.progress }}%</span>
                 </div>
                 <div
                   class="bar-shell"
                   role="progressbar"
-                  [attr.aria-label]="'Participant ' + participant.label + ' progress'"
+                  [attr.aria-label]="participant.displayName + ' progress'"
                   [attr.aria-valuenow]="participant.progress"
                   aria-valuemin="0"
                   aria-valuemax="100"

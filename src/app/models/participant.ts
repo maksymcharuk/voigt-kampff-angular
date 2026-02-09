@@ -14,6 +14,7 @@ export interface QuestionResponseSummary {
 
 export interface ParticipantDoc {
   id?: string;
+  name?: string;
   joinedAt?: unknown;
   finished: boolean;
   avgResponseTime: number;
