@@ -1,6 +1,6 @@
 import { Question } from '../models/question';
 
-export const QUESTION_SET_VERSION = 3;
+export const QUESTION_SET_VERSION = 4;
 
 export const QUESTIONS: Question[] = [
   {
@@ -331,6 +331,81 @@ export const QUESTIONS: Question[] = [
       A: { empathy: 2, ambiguity: 1 },
       B: { efficiency: 1, ambiguity: 1 },
       C: { efficiency: 1, initiative: 1 },
+    },
+  },
+  {
+    id: 'q23',
+    text: 'A crowd expects a public apology you do not feel is warranted.',
+    durationSec: 16,
+    options: [
+      { id: 'A', label: 'A', text: 'Apologize to calm the situation.' },
+      { id: 'B', label: 'B', text: 'Refuse and explain your position.' },
+      { id: 'C', label: 'C', text: 'Ask for a private conversation instead.' },
+    ],
+    scoring: {
+      A: { empathy: 1, efficiency: 1, ambiguity: 1 },
+      B: { initiative: 2, efficiency: 1, empathy: -1 },
+      C: { ambiguity: 2, empathy: 1 },
+    },
+  },
+  {
+    id: 'q24',
+    text: 'An algorithm flags a friend unfairly, but appeals take time.',
+    durationSec: 16,
+    options: [
+      { id: 'A', label: 'A', text: 'Bypass the system to help them now.' },
+      { id: 'B', label: 'B', text: 'File an appeal and wait.' },
+      { id: 'C', label: 'C', text: 'Gather evidence before acting.' },
+    ],
+    scoring: {
+      A: { empathy: 1, initiative: 1, efficiency: -1 },
+      B: { efficiency: 2, ambiguity: 1 },
+      C: { ambiguity: 2, initiative: 1 },
+    },
+  },
+  {
+    id: 'q25',
+    text: 'You can share a resource with one group or distribute it thinly to all.',
+    durationSec: 17,
+    options: [
+      { id: 'A', label: 'A', text: 'Give it all where it has highest impact.' },
+      { id: 'B', label: 'B', text: 'Split it evenly among all groups.' },
+      { id: 'C', label: 'C', text: 'Delay and seek more input.' },
+    ],
+    scoring: {
+      A: { efficiency: 2, initiative: 1, empathy: -1 },
+      B: { empathy: 2, ambiguity: 1 },
+      C: { ambiguity: 2, initiative: 1 },
+    },
+  },
+  {
+    id: 'q26',
+    text: 'A teammate’s idea is flawed but they are visibly proud of it.',
+    durationSec: 15,
+    options: [
+      { id: 'A', label: 'A', text: 'Point out flaws immediately.' },
+      { id: 'B', label: 'B', text: 'Praise effort and suggest revisions later.' },
+      { id: 'C', label: 'C', text: 'Let it proceed and collect data.' },
+    ],
+    scoring: {
+      A: { efficiency: 1, initiative: 1, empathy: -1 },
+      B: { empathy: 2, ambiguity: 1 },
+      C: { ambiguity: 2, efficiency: 1 },
+    },
+  },
+  {
+    id: 'q27',
+    text: 'You are offered an upgrade that boosts performance but alters personality.',
+    durationSec: 17,
+    options: [
+      { id: 'A', label: 'A', text: 'Accept; performance is the priority.' },
+      { id: 'B', label: 'B', text: 'Decline; continuity matters.' },
+      { id: 'C', label: 'C', text: 'Accept only with a reversible trial.' },
+    ],
+    scoring: {
+      A: { efficiency: 2, initiative: 1, empathy: -1 },
+      B: { empathy: 2, ambiguity: 1 },
+      C: { ambiguity: 2, initiative: 1 },
     },
   },
 ];
