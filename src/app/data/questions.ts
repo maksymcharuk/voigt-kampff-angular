@@ -187,7 +187,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q13',
     text: 'A teammate has an idea that will not work, but they are proud of it.',
-    durationSec: 15,
+    durationSec: 16,
     options: [
       { id: 'A', label: 'A', text: 'Point out the problems right away.' },
       { id: 'B', label: 'B', text: 'Praise their effort and suggest changes later.' },
@@ -202,7 +202,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q14',
     text: 'You are offered a promotion that pays more but requires missing family events.',
-    durationSec: 15,
+    durationSec: 16,
     options: [
       { id: 'A', label: 'A', text: 'Accept; the money is the priority.' },
       { id: 'B', label: 'B', text: 'Decline; free time matters more.' },
@@ -217,7 +217,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q15',
     text: 'A waiter spills a drink on your table by accident.',
-    durationSec: 10,
+    durationSec: 12,
     options: [
       { id: 'A', label: 'A', text: 'Help them clean it up.' },
       { id: 'B', label: 'B', text: 'Complain to the manager.' },
@@ -232,7 +232,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q16',
     text: 'You are late. An elderly person is walking very slowly in front of you.',
-    durationSec: 10,
+    durationSec: 15,
     options: [
       { id: 'A', label: 'A', text: 'Walk around them quickly.' },
       { id: 'B', label: 'B', text: 'Wait patiently behind them.' },
@@ -247,7 +247,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q17',
     text: 'You see a friend posting sad song lyrics online late at night.',
-    durationSec: 12,
+    durationSec: 14,
     options: [
       { id: 'A', label: 'A', text: 'Message them to check if they are OK.' },
       { id: 'B', label: 'B', text: 'Keep scrolling, it is just lyrics.' },
@@ -262,7 +262,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q18',
     text: 'The bus is full. A tired parent with a child gets on.',
-    durationSec: 10,
+    durationSec: 12,
     options: [
       { id: 'A', label: 'A', text: 'Offer your seat immediately.' },
       { id: 'B', label: 'B', text: 'Look at your phone to avoid eye contact.' },
@@ -277,7 +277,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q19',
     text: 'Someone drops a glove on the street and keeps walking.',
-    durationSec: 8,
+    durationSec: 14,
     options: [
       { id: 'A', label: 'A', text: 'Run after them to return it.' },
       { id: 'B', label: 'B', text: 'Leave it there.' },
